@@ -1,0 +1,39 @@
+############################
+# General
+############################
+.env
+.env.*
+*.log
+*.pem
+*.key
+*.crt
+
+############################
+# ESP32 / PlatformIO / Arduino
+############################
+esp32_solar_max/secrets.h
+esp32_solar_max/.pio/
+esp32_solar_max/.vscode/
+esp32_solar_max/build/
+*.elf
+*.bin
+
+############################
+# Flutter
+############################
+flutter_solar_max/.dart_tool/
+flutter_solar_max/build/
+flutter_solar_max/.env
+flutter_solar_max/android/.gradle/
+flutter_solar_max/android/local.properties
+flutter_solar_max/ios/Pods/
+flutter_solar_max/ios/.symlinks/
+flutter_solar_max/lib/firebase_options.dart
+
+############################
+# OS / Editor
+############################
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

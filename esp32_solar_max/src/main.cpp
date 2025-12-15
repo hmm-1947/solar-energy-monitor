@@ -1,21 +1,12 @@
 #define ENABLE_USER_AUTH
 #define ENABLE_DATABASE
 
+#include "secrets.h"
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <FirebaseClient.h>
 #include <ModbusMaster.h>
 #include <time.h>
-
-/* WiFi */
-const char *WIFI_SSID = "Mailadiyil Wi-Fi";
-const char *WIFI_PASSWORD = "independentindia";
-
-/* Firebase */
-#define API_KEY "AIzaSyDZmOo4IDRSigKnBwIhFWCXhOQTbZi_bMM"
-#define USER_EMAIL "esp32@solar.com"
-#define USER_PASSWORD "esp32@solar.com"
-#define DATABASE_URL "https://solar-max-d76df-default-rtdb.asia-southeast1.firebasedatabase.app"
 
 UserAuth user_auth(API_KEY, USER_EMAIL, USER_PASSWORD);
 FirebaseApp app;
