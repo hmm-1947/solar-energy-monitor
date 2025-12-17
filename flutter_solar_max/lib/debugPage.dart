@@ -24,30 +24,26 @@ class DebugPage extends StatelessWidget {
 
             final data = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
 
-            final bool wifiConnected = data['wifi_connected'] ?? false;
-            final bool firebaseReady = data['firebase_ready'] ?? false;
             final bool inverterOnline = data['inverter_online'] ?? false;
             final int modbusError = data['modbus_error_code'] ?? 0;
             final int uptime = data['uptime_seconds'] ?? 0;
+            final int lastSeen = data['last_seen'] ?? 0;
+            final int now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+            final bool systemOnline = (now - lastSeen) < 120; // 2 min timeout
 
             return GridView.count(
-              crossAxisCount: 3, // ⬅️ more columns = smaller cards
+              crossAxisCount: 2, // ⬅️ more columns = smaller cards
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
-              childAspectRatio: 1.9, // ⬅️ closer to square & compact
+              childAspectRatio: 1, // ⬅️ closer to square & compact
               children: [
                 debugCard(
-                  icon: Icons.wifi,
-                  label: "WiFi",
-                  value: wifiConnected ? "Connected" : "Disconnected",
-                  color: wifiConnected ? Colors.green : Colors.red,
+                  icon: systemOnline ? Icons.wifi : Icons.wifi_off,
+                  label: "System",
+                  value: systemOnline ? "Online" : "Offline",
+                  color: systemOnline ? Colors.green : Colors.red,
                 ),
-                debugCard(
-                  icon: Icons.cloud,
-                  label: "Firebase",
-                  value: firebaseReady ? "Ready" : "Not Ready",
-                  color: firebaseReady ? Colors.green : Colors.red,
-                ),
+
                 debugCard(
                   icon: Icons.power,
                   label: "Inverter",
