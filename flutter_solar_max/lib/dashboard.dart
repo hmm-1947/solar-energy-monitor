@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:solar_max/daily.dart';
+import 'package:solar_max/debugPage.dart';
 import 'package:solar_max/today.dart';
 import 'package:solar_max/monthly.dart';
 import 'package:solar_max/yearly.dart';
@@ -31,14 +32,21 @@ class Dashboard extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Solar Dashboard"),
         backgroundColor: Colors.green,
+        leading: IconButton(
+          icon: const Icon(Icons.bug_report),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const DebugPage()),
+            );
+          },
+        ),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          // WEB ONLY breakpoints
           final bool isWebWide = constraints.maxWidth > 900;
           final bool isWebUltra = constraints.maxWidth > 1200;
 
-          // Android will ALWAYS be 2
           int gridColumns = 2;
           if (isWebUltra) {
             gridColumns = 4;
@@ -59,17 +67,16 @@ class Dashboard extends StatelessWidget {
                 final data =
                     snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
 
-                double pvV = (data['pv_voltage'] ?? 0).toDouble();
-                double pvI = (data['pv_current'] ?? 0).toDouble();
-                double power = (data['ac_power'] ?? 0).toDouble();
+                final double pvV = (data['pv_voltage'] ?? 0).toDouble();
+                final double pvI = (data['pv_current'] ?? 0).toDouble();
+                final double power = (data['ac_power'] ?? 0).toDouble();
 
                 return Center(
-                  // ✅ WEB ONLY – Android width never hits this
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1200),
                     child: Column(
                       children: [
-                        /* ================= TOP GAUGES (UNCHANGED) ================= */
+                        /* ================= TOP GAUGES ================= */
                         Row(
                           children: [
                             gaugeCard(
@@ -98,6 +105,8 @@ class Dashboard extends StatelessWidget {
 
                         const SizedBox(height: 16),
 
+                        /* ================= FULL WIDTH STATUS ================= */
+
                         /* ================= DATA GRID ================= */
                         Expanded(
                           child: GridView.count(
@@ -124,8 +133,7 @@ class Dashboard extends StatelessWidget {
                               infoCard(
                                 "Work Hours",
                                 "${data['work_hours']} h",
-                                Colors.yellow,
-                                darkText: true,
+                                Colors.blue,
                               ),
                               energyCard(
                                 context,
@@ -175,11 +183,31 @@ class Dashboard extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              infoCard(
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(14),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: Column(
+                            children: [
+                              const Text(
                                 "Status",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
                                 data['status_text'] ?? "--",
-                                Colors.yellow,
-                                darkText: true,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
                             ],
                           ),
@@ -205,7 +233,7 @@ class Dashboard extends StatelessWidget {
     required double max,
     required Color color,
   }) {
-    double percent = (value / max).clamp(0, 1);
+    final double percent = (value / max).clamp(0, 1);
 
     return Expanded(
       child: Container(
@@ -258,12 +286,7 @@ class Dashboard extends StatelessWidget {
     );
   }
 
-  Widget infoCard(
-    String title,
-    String value,
-    Color color, {
-    bool darkText = false,
-  }) {
+  Widget infoCard(String title, String value, Color color) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -273,17 +296,14 @@ class Dashboard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: TextStyle(color: darkText ? Colors.black : Colors.white),
-          ),
+          Text(title, style: const TextStyle(color: Colors.white)),
           const SizedBox(height: 8),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: darkText ? Colors.black : Colors.white,
+              color: Colors.white,
             ),
           ),
         ],
